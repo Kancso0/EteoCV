@@ -115,13 +115,13 @@ class UItools {
 
             if((actualSite.querySelectorAll('.projekt').length) == 2) {
 
-                console.log("Site "+siteCount + "-----------");
+                /*console.log("Site "+siteCount + "-----------");
                 console.log(actualSite.lastChild.previousSibling.clientHeight + " "+ actualSite.lastChild.clientHeight);
-                console.log(actualSite.lastChild.previousSibling.clientHeight + actualSite.lastChild.clientHeight + " px");             
+                console.log(actualSite.lastChild.previousSibling.clientHeight + actualSite.lastChild.clientHeight + " px");     */        
 
                 /* Test for json data processing instead of DOM element height, because it will not succeed due to responsiveness  */
-                console.log("Description text length prev-child : " + actualSite.lastChild.previousSibling.querySelector(".description_section > p").innerText.length);
-                console.log("Description text length last-child " +actualSite.lastChild.querySelector(".description_section > p").innerText.length);
+                /*console.log("Description text length prev-child : " + actualSite.lastChild.previousSibling.querySelector(".description_section > p").innerText.length);
+                console.log("Description text length last-child " +actualSite.lastChild.querySelector(".description_section > p").innerText.length);*/
 
                 const actualHeight = actualSite.lastChild.previousSibling.clientHeight + actualSite.lastChild.clientHeight;
 
@@ -171,16 +171,18 @@ class UItools {
     }      
 }
 
+
+
 class formTools {
 
     static async populateProjectForm() {
         const projects = await ProcessData.readJsonFromServer("http://localhost:8080/project/getAllProjectFromList");
         console.log(projects);
-        let select = document.getElementById("projectSelector");
+        const select = document.getElementById("projectSelector");
         
 
         projects.forEach(element => {
-            let optionForProject = document.createElement("option");
+            const optionForProject = document.createElement("option");
             optionForProject.innerText = element.workplace;
             optionForProject.value = element.workplace;
             
@@ -189,33 +191,38 @@ class formTools {
         });
 
         select.addEventListener("change", (event) => {
-            let actualProject = projects.find((project) => project.workplace == event.target.value);
+            const actualProject = projects.find((project) => project.workplace === event.target.value);
             console.log("ActialProject");
             console.log(actualProject);
-            
-            this.populateProjectName(actualProject.costumer);
 
+            const projectName = document.getElementById("projectNameSelector");
+            recreateNode(projectName, true);
+
+            this.populateProjectName(actualProject.costumer);
+            
         });
     }
 
     static populateProjectName(actualProjectCustomer) {
-        let projectName = document.getElementById("projectNameSelector");
-        projectName.innerHTML = null;
-                       
+        const projectName = document.getElementById("projectNameSelector");
+        projectName.innerHTML = '<option value="" selected disabled hidden>Choose Name</option>';
 
             actualProjectCustomer.forEach((customer) => {
-                let optionForCustomerName = document.createElement("option");
+                const optionForCustomerName = document.createElement("option");
                 optionForCustomerName.innerText = customer.name;
                 optionForCustomerName.value = customer.name;
                 
                 projectName.appendChild(optionForCustomerName);
             });
 
+
             projectName.addEventListener("change", (event) => {
-                let customer = actualProjectCustomer.find((customer) => customer.name == event.target.value);
-                console.log(customer);
-                this.populateDescription(customer);
+                
+                const customer = actualProjectCustomer.find((custom) => custom.name === event.target.value);
+               console.log(customer);
+                this.populateDescription(customer.project);
                 this.populateMultiselects();
+                
             });
     }
 
@@ -230,7 +237,7 @@ class formTools {
        
         properties.forEach((data) => {
             data.tools.forEach((tools) => {
-                let optionTools = document.createElement("option");
+                const optionTools = document.createElement("option");
                     optionTools.innerText = tools;
                     optionTools.value = tools;
                 
@@ -238,7 +245,7 @@ class formTools {
             });
 
             data.activities.forEach((activities) => {
-                let optionTools = document.createElement("option");
+                const optionTools = document.createElement("option");
                     optionTools.innerText = activities;
                     optionTools.value = activities;
                 
@@ -248,9 +255,9 @@ class formTools {
     }
 
     static populateDescription(actualProjectCustomer) {
-        let descriptionField = document.querySelector("#projectForm #description");
-        descriptionField.innerText = "";
-        actualProjectCustomer.project.forEach((projectDetails) => {
+        const descriptionField = document.querySelector("#projectForm #description");
+        descriptionField.innerHTML = null;
+        actualProjectCustomer.forEach((projectDetails) => {
             descriptionField.innerText = projectDetails.description;
         });
     }
@@ -332,6 +339,17 @@ function convertToPdf() {
 
     html2pdf().from(html).set(options).save();
 
+}
+
+function recreateNode(el, withChildren) {
+    if (withChildren) {
+      el.parentNode.replaceChild(el.cloneNode(true), el);
+    }
+    else {
+      var newEl = el.cloneNode(false);
+      while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+      el.parentNode.replaceChild(newEl, el);
+    }
 }
 
 function submitProjectForm() {
