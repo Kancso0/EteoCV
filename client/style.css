@@ -1,0 +1,114 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.window {
+    position: relative;
+    width: 100%;
+    display: flex;
+    padding: 20px;
+    background-color: grey;
+
+}
+.site_section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    width:100%; 
+    /* background-color: grey; */
+}
+
+.site {
+    position:relative;
+    width: 100%;
+    background-color: white;
+    height: 1100px;
+    padding: 30px 40px 30px 40px;
+    margin-bottom: 20px;
+}
+
+.toolbar {
+    width: 80%;
+    background-color:greenyellow;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    
+}
+
+
+.header {
+    width: 100%;
+    height: 60px;
+}
+
+.projekt {
+    margin-top: 40px;
+}
+
+.site_section img {
+    width: 70px;
+    height: 70px;
+    float: right;
+}
+
+.site_section table {
+    width: 80%;
+    margin: 0;
+    padding: 0;
+}
+
+.site_section table th:first-child{
+    width: 150px;
+    padding-left: 10px;
+}
+
+.site_section table td:last-child p:first-child{
+    text-decoration: underline;
+}
+
+.site_section table td, th {
+    font-size: 15px;
+    text-align: left;
+}
+
+.description_section {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding-left: 20px;
+}
+
+.activities {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.activities ul {
+    padding-left: 25px;
+    padding-top: 10px;
+    
+}
+
+.activities li {
+    padding-left: 10px;  
+}
+
+.tools {
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+.footer{
+    width: 90%; 
+    position:absolute;
+    bottom: 20px;
+    margin: 0px;
+}
+
+.footer .datas {
+    display: flex;
+    justify-content: space-between; 
+    color: grey;
+}
