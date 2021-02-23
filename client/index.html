@@ -12,14 +12,55 @@
     <title>Document</title>
 </head>
 <body>
-    <button onclick="convertToPdf()">Convert to PDF</button>
     <div class="window">
         <!-- <div class="columnA"></div> -->
         <div class="site_section" id="sites">
-            <!-- <div class="site">
-                <div>hello</div>
-                <div>bello</div>
-            </div> -->
+          <!-- Profil Site -->
+            <div class="site" id="profilSite">
+              <div class="header">
+                <img src="images/Zeiss-logo.jpg" alt="">
+              </div>
+                <div class="personal-datas pl-5">
+                  <h2 class="name"></h2>
+                  <h2 class="role pt-5"></h2>
+                  <div class="position"></div>
+                </div>
+                <div class="data-table pl-5"> 
+                  <h2>Angaben zur Person</h2>
+                  <table class="datas w-100 mt-5">
+                    <tbody>
+                      <tr>
+                        <td>Jahrgang</td>
+                        <td class="year_of_birth">1997</td>
+                      </tr>
+                      <tr>
+                        <td>Schwerpunkte</td>
+                        <td class="strengths"></td>
+                      </tr>
+                      <tr>
+                        <td>Studium</td>
+                        <td class="studies"></td>
+                      </tr>
+                      <tr>
+                        <td class="sector"></td>
+                        <td class="sectors">
+                          
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="certificate pl-5 pt-5">
+                  <h2>Zertifizierungen</h2>
+                  <table>
+                    <tbody>
+                      <td class="w-25"></td>
+                      <td class="certificates"></td>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+            <!-- Project sites -->
             <div class="site" id="knowledgeSite-1">
                 
                 <div class="projekt_title"><h3>Projekterfahrung</h3></div>
@@ -27,23 +68,29 @@
             </div>
         </div>
         <div class="container-fluid toolbar">
+          <!-- Project tool section -->
             <section class="mt-3">
+                <div class="d-flex justify-content-center mb-3 mt-100">
+                  <button type="button" class="btn btn-primary btn-lg btn-block w-75" onclick="convertToPdf()">Convert to PDF</button>
+                </div>
+
                 <div class="d-flex justify-content-center mb-3 mt-100">
                   <button
                   type="button" class="btn btn-dark btn-lg btn-block w-75 createBlogButton"
-                  data-toggle="collapse" data-target="#collapseForm" aria-expanded="false"
-                  aria-controls="collapseForm">
+                  data-toggle="collapse" data-target="#collapseprojectForm" aria-expanded="false"
+                  aria-controls="collapseprojectForm">
                   Let's create a Project
-                  </button>
+                  </button>                  
                 </div>
+                
                 <form id="projectForm">
-                <div  class="collapse" id="collapseForm">
-                      <div class="form-group">
-                        <label for="projectSelector">Select a project</label>
-                        <select class="form-control" id="projectSelector">
-                            <option value="" selected disabled hidden>Choose here</option>
-                        </select>
-                      </div>
+                      <div  class="collapse" id="collapseprojectForm">
+                          <div class="form-group">
+                              <label for="projectSelector">Select a project</label>
+                              <select class="form-control" id="projectSelector">
+                                  <option value="" selected disabled hidden>Choose here</option>
+                              </select>
+                        </div>
                       <div class="form-group">
                         <label for="projectNameSelector">Select project name</label>
                         <select class="form-control" id="projectNameSelector">
@@ -80,9 +127,145 @@
                         </textarea>
                       </div>
                       <button type="button" onclick="submitProjectForm()" class="btn btn-info w-100">Submit</button>
-                  </form>
-                 </div>
-                 </section>
+                </form>               
+            </section>
+            <!--  // Project tool section -->
+
+            <!-- Personal tool section -->
+            <section class="mt-3">
+              <div class="d-flex justify-content-center mb-3 mt-100">
+                <button
+                type="button" class="btn btn-dark btn-lg btn-block w-75 createBlogButton"
+                data-toggle="collapse" data-target="#collapsePersonalForm" aria-expanded="false"
+                aria-controls="collapsePersonalForm">
+                Personal datas
+                </button>                  
+              </div>
+              
+              <form id="personalForm">
+                    <div  class="collapse" id="collapsePersonalForm">
+                      <div class="form-group">
+                        <label for="name">Name</label>
+                        <div>
+                          <input class="form-control" type="text" value="" id="name">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="role">Role</label>
+                        <div>
+                          <input class="form-control" type="text" value="" id="role">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="position">Position</label>
+                        <div>
+                          <input class="form-control" type="text" value="" id="position">
+                        </div>
+                      </div>
+                    <div class="form-group">
+                      <label for="year_of_birth">Birthday</label>
+                      <div>
+                        <input class="form-control" type="text" value="" id="year_of_birth">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="strengths">Strengths</label>
+                      <div>
+                        <input class="form-control" type="text" value="" id="strengths">
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <label for="studium">Studium</label>
+                        <div>
+                          <input class="form-control" type="text" value="" id="studium">
+                        </div>
+                      </div>
+                      <div class="col">
+                        <label for="studiumYear">Year</label>
+                        <div>
+                          <input maxlength="4" class="form-control" type="text" value="" id="studiumYear">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="sector">Sector</label>
+                      <div>
+                        <input class="form-control" type="text" value="" id="sector">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="certificates">Certificates</label>
+                      <div>
+                        <input class="form-control" type="text" value="" id="certificates">
+                      </div>
+                    </div>
+                    <button type="button" onclick="submitPersonalForm()" class="btn btn-info w-100">Save changes</button>
+              </form>               
+          </section>
+           <!-- // Personal tool section -->
+      </div>
+
+            <section class="modal_section_forProject">
+              <div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="projectModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="projectModalLabel"></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="projectForm">
+                          
+                                <div class="form-group">
+                                  <label for="projectSelector">Project</label>
+                                  <input class="form-control" type="text" value="" id="workplace">
+                          
+                          <div class="form-group">
+                            <label for="projectNameSelector">Project name</label>
+                            <input class="form-control" type="text" value="" id="name">
+                          </div>
+                          <div class="form-group">
+                            <label for="projectStart">Project Start</label>
+                            <div>
+                              <input class="form-control" type="text" value="" id="startTime">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="projectEnd">Project End</label>
+                            <div>
+                              <input class="form-control" type="text" value="" id="endTime">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="activities">Activities</label>
+                            <input class="form-control" type="text" value="" id="activities">
+                          </div>
+                          <div class="form-group">
+                            <label for="tools">Tools</label>
+                            <input class="form-control" type="text" value="" id="tools">
+                          </div>
+                          <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" rows="3">
+                            </textarea>
+                          </div>
+                          <div class="form-group">
+                            <input class="form-control" type="hidden" value="" id="id">
+                          </div>
+                          
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button onclick="saveProjectChanges()" type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
         </div>
     </div>
 

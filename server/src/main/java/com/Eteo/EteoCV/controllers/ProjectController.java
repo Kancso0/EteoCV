@@ -2,11 +2,9 @@ package com.Eteo.EteoCV.controllers;
 
 import com.Eteo.EteoCV.models.Project;
 import com.Eteo.EteoCV.models.ProjectList.ProjectObj;
-import com.Eteo.EteoCV.models.properties.Properties;
 import com.Eteo.EteoCV.payloads.response.MessageResponse;
 import com.Eteo.EteoCV.repository.ProjectListRepo;
-import com.Eteo.EteoCV.repository.ProjectRepo;
-import com.Eteo.EteoCV.repository.PropertiesRepo;
+import com.Eteo.EteoCV.repository.PersonalPropertiesRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,34 +17,16 @@ import java.util.List;
 @RequestMapping("/project")
 public class ProjectController {
 
-    @Autowired
-    ProjectRepo projectRepo;
 
     @Autowired
     ProjectListRepo projectListRepo;
 
     @Autowired
-    PropertiesRepo propertiesRepo;
+    PersonalPropertiesRepo personalPropertiesRepo;
 
-    @PostMapping("/addProject")
-    public ResponseEntity<?> addProject(@RequestBody Project project) {
-
-        projectRepo.save(project);
-
-        return new ResponseEntity<>(new MessageResponse("Successfully added to Project"), HttpStatus.OK);
-    }
-
-
-    @GetMapping("/getProjects")
-    public ResponseEntity<List<Project>> getProjects() {
-
-        List<Project> allProject = projectRepo.findAll();
-
-        return new ResponseEntity(allProject, HttpStatus.OK);
-    }
 
     @PostMapping("/addToProjectList")
-        public ResponseEntity<?> addToProjectList(@RequestBody ProjectObj projectObj) {
+        public ResponseEntity<MessageResponse> addToProjectList(@RequestBody ProjectObj projectObj) {
 
         projectListRepo.save(projectObj);
 
@@ -61,19 +41,4 @@ public class ProjectController {
         return new ResponseEntity(projectList, HttpStatus.OK);
     }
 
-    @PostMapping("/addProperties")
-    public ResponseEntity<?> addProperties(@RequestBody Properties properties) {
-
-        propertiesRepo.save(properties);
-
-        return new ResponseEntity<>(new MessageResponse("Successfully added to Properties"), HttpStatus.OK);
-    }
-
-    @GetMapping("/getProperties")
-    public ResponseEntity<List<Properties>> getAllProperties() {
-
-        List<Properties> properties = propertiesRepo.findAll();
-
-        return new ResponseEntity(properties, HttpStatus.OK);
-    }
 }

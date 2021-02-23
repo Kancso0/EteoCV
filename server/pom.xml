@@ -13,9 +13,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>EteoCV</name>
 	<description>EteoCV backend</description>
-	<properties>
+	<personalProperties>
 		<java.version>1.8</java.version>
-	</properties>
+	</personalProperties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

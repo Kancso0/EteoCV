@@ -1,4 +1,6 @@
 
+const userId = "6034fc36c6033033bd603e84"
+
 class UItools {
 
     generateHeader() {
@@ -28,6 +30,47 @@ class UItools {
         return footer;
     }
 
+    generateProfilSite(userData) {
+        const profilSite = document.querySelector("#profilSite");
+
+        document.querySelector("#profilSite .name").innerText = userData.name;
+        document.querySelector("#profilSite .role").innerText = userData.role;
+        document.querySelector("#profilSite .position").innerText = userData.position;
+        document.querySelector("#profilSite .strengths").innerText = userData.strengths.toString();
+        document.querySelector("#profilSite .studies").innerText = userData.studium + " , " + userData.studiumYear;
+
+        if(userData.sector) {
+            document.querySelector("#profilSite .datas .sector").innerText = "Branchen";
+            document.querySelector("#profilSite .datas .sectors").innerText = userData.sector;
+        }
+
+       /* if(userData.sectors.length != 0) {
+
+            document.querySelector("#profilSite .datas .sector").innerText = "Branchen";
+            const sectores = document.querySelector("#profilSite .datas .sectores");
+
+            for(let i = 0; i < userData.sectors.length; i++) {
+                let p = document.createElement("p");
+                let li = document.createElement("li");
+                    p.innerText = userData.sectors[i].name;
+                    li.innerText = userData.sectors[i].sector.toString();
+
+                    sectores.appendChild(p);
+                    sectores.appendChild(li);
+            }
+            
+        }*/
+
+        if(userData.certificates.length != 0) {
+            document.querySelector("#profilSite .certificate h2").innerText = "Zertifizierungen";
+            document.querySelector("#profilSite .certificate .certificates").innerText = userData.certificates.toString();
+        }
+        
+        const footer = this.generateFooter();
+        profilSite.appendChild(footer);
+
+    }
+
     generateProjectDiv(json) {
         const projektdiv = document.createElement("div");
                 projektdiv.classList.add("projekt");
@@ -36,8 +79,15 @@ class UItools {
                 <table>
                     <thead>
                         <tr>
-                            <th>${json.time}</th>
+                            <th>${json.startTime} - ${json.endTime}</th>
                             <th>${json.workplace}</th>
+                            <th>
+                                <button type="button" data-toggle="modal" data-target="#projectModal"
+                                    class="edit-project btn btn-secondary" id="editProject-${json.id}"> Edit </button>
+
+                                <button type="button" class="delete-project btn btn-danger" id="deleteProject-${json.id}"> Delete </button>
+                            </th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +99,8 @@ class UItools {
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                </table>               
+            <div>
                 <div class="description_section">
                     <p>${json.description}</p>
                     <div class="activities"><u>Tätigkeiten:</u> 
@@ -115,9 +166,9 @@ class UItools {
 
             if((actualSite.querySelectorAll('.projekt').length) == 2) {
 
-                /*console.log("Site "+siteCount + "-----------");
+                console.log("Site "+siteCount + "-----------");
                 console.log(actualSite.lastChild.previousSibling.clientHeight + " "+ actualSite.lastChild.clientHeight);
-                console.log(actualSite.lastChild.previousSibling.clientHeight + actualSite.lastChild.clientHeight + " px");     */        
+                console.log(actualSite.lastChild.previousSibling.clientHeight + actualSite.lastChild.clientHeight + " px");             
 
                 /* Test for json data processing instead of DOM element height, because it will not succeed due to responsiveness  */
                 /*console.log("Description text length prev-child : " + actualSite.lastChild.previousSibling.querySelector(".description_section > p").innerText.length);
@@ -152,18 +203,14 @@ class UItools {
             if(i == json.length - 1) {
                 this.setFooterSiteNum();
             }
+
+            document.querySelector("#editProject-" + json[i].id).addEventListener("click", () => editProject(json[i]));
+            document.querySelector("#deleteProject-" + json[i].id).addEventListener("click", () => deleteProject(json[i].id));
         }      
     }
 
     setFooterSiteNum() {
         const maxSiteNum = document.getElementById("sites").querySelectorAll(".site").length;
-        /*const siteNum =  document.getElementById("sites").querySelectorAll(".site");
-        
-        siteNum.forEach(site => {
-            const currentText = site.querySelector(".footer .datas > div:last-child").innerText;
-            const updatedText = currentText + " " +maxSiteNum;
-            site.querySelector(".footer .datas > div:last-child").innerText = updatedText;            
-        });*/
 
         [...document.getElementById("sites").querySelectorAll(".site")].map((site, index) => {
             site.querySelector(".footer .datas > div:last-child").innerText = `Seite ${index + 1} von ${maxSiteNum}`;
@@ -174,9 +221,11 @@ class UItools {
 
 
 class formTools {
+    
 
     static async populateProjectForm() {
-        const projects = await ProcessData.readJsonFromServer("http://localhost:8080/project/getAllProjectFromList");
+        const projects = await ProcessData.getFromServer("http://localhost:8080/project/getAllProjectFromList");
+        const properties = await ProcessData.getFromServer("http://localhost:8080/personal/getPersonalProperties");
         console.log(projects);
         const select = document.getElementById("projectSelector");
         
@@ -194,16 +243,20 @@ class formTools {
             const actualProject = projects.find((project) => project.workplace === event.target.value);
             console.log("ActialProject");
             console.log(actualProject);
+            
+            document.getElementById("activities").innerHTML = null;
+            document.getElementById("tools").innerHTML = null;
+            document.querySelector("#projectForm #description").innerHTML = null;
 
             const projectName = document.getElementById("projectNameSelector");
             recreateNode(projectName, true);
 
-            this.populateProjectName(actualProject.costumer);
+            this.populateProjectName(actualProject.costumer, properties);
             
         });
     }
 
-    static populateProjectName(actualProjectCustomer) {
+    static populateProjectName(actualProjectCustomer, properties) {
         const projectName = document.getElementById("projectNameSelector");
         projectName.innerHTML = '<option value="" selected disabled hidden>Choose Name</option>';
 
@@ -221,13 +274,13 @@ class formTools {
                 const customer = actualProjectCustomer.find((custom) => custom.name === event.target.value);
                console.log(customer);
                 this.populateDescription(customer.project);
-                this.populateMultiselects();
+                this.populateMultiselects(properties);
                 
             });
     }
 
-    static async populateMultiselects() {
-        const properties = await ProcessData.readJsonFromServer("http://localhost:8080/project/getProperties");
+    static async populateMultiselects(properties) {
+        
         const selectActivities = document.getElementById("activities");
         const selectTools = document.getElementById("tools");
 
@@ -235,8 +288,8 @@ class formTools {
         selectActivities.innerHTML = null;
 
        
-        properties.forEach((data) => {
-            data.tools.forEach((tools) => {
+        
+        properties[0].tools.forEach((tools) => {
                 const optionTools = document.createElement("option");
                     optionTools.innerText = tools;
                     optionTools.value = tools;
@@ -244,14 +297,14 @@ class formTools {
                 selectTools.appendChild(optionTools);
             });
 
-            data.activities.forEach((activities) => {
+        properties[0].activities.forEach((activities) => {
                 const optionTools = document.createElement("option");
                     optionTools.innerText = activities;
                     optionTools.value = activities;
                 
                 selectActivities.appendChild(optionTools);
             });
-        });
+        
     }
 
     static populateDescription(actualProjectCustomer) {
@@ -262,15 +315,21 @@ class formTools {
         });
     }
 
+    static populatePersonalForm(userData) {
+        const personalForm = document.querySelector("#personalForm");
+
+        [...personalForm.querySelectorAll("input")].map((input) => {
+             input.value = userData[input.id];
+        });
+    }
+
 
 }
-
-
 
 class ProcessData {
 
 
-    static async readJsonFromServer(url) {
+    static async getFromServer(url) {
         const response = await fetch(url, {
             method: 'GET',
         });
@@ -283,7 +342,7 @@ class ProcessData {
         return jsonData;
     }
 
-    static async addProject(url, data) {
+    static async postToServer(url, data) {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -311,6 +370,151 @@ class ProcessData {
         const jsonData = await response.json();
         return jsonData
     }
+}
+
+function submitPersonalForm() {
+    let finalPersonalObj = {
+        name: "",
+        role: "",
+        position: "",
+        year_of_birth: "",
+        strengths: "",
+        studium: "",
+        studiumYear: "",
+        sector: "",
+        certificates: ""
+    };
+
+    const personalForm = document.querySelector("#personalForm");
+
+        [...personalForm.querySelectorAll("input")].map((input) => {
+             finalPersonalObj[input.id] = input.value;
+
+             if(input.id == "strengths") finalPersonalObj.strengths = input.value.split(",");
+             if(input.id == "certificates") finalPersonalObj.certificates = input.value.split(",");
+        });
+
+        
+        const url = "http://localhost:8080/user/modifyUserPersonal/" + userId;
+
+        ProcessData.postToServer(url, finalPersonalObj).then(res => {
+            alert(res.message);
+            location.reload();
+        });
+
+}
+
+function editProject(json) {
+    const modal = document.getElementById("projectModal");
+        modal.querySelector(".modal-title").innerText = "Editing.... " +json.workplace+ " project";
+        modal.querySelector("#description").value = json.description;
+
+        [...modal.querySelectorAll("input")].map((input) => {
+            if(input.id == "activities") input.value = json[input.id].toString();
+            if(input.id == "tools") input.value = json[input.id].toString();
+
+            input.value = json[input.id];
+        });
+
+}
+
+function saveProjectChanges() {
+    const modal = document.getElementById("projectModal");
+
+    let finalProjectObj = {
+        id: "",
+        workplace: "",
+        startTime: "",
+        endTime: "",
+        name: "",
+        post: "",
+        activities: "",
+        tools: "",
+        description: ""
+    };
+
+    finalProjectObj.description = modal.querySelector("#description").value;
+
+    [...modal.querySelectorAll("input")].map(input => {
+        finalProjectObj[input.id] = input.value;
+
+        if(input.id == "activities") finalProjectObj.activities = input.value.split(",");       
+        if(input.id == "tools") finalProjectObj.tools = input.value.split(",");       
+    });
+    
+    //const id = modal.querySelector("#id").value;
+
+    const url = "http://localhost:8080/user/modifyProject/" + userId;
+
+
+    ProcessData.postToServer(url, finalProjectObj).then(res => {
+        alert(res.message);
+        location.reload();
+    });
+
+}
+
+function deleteProject(id) {
+
+    if(confirm("Are you sure to delete this Project?")){
+
+        const url = "http://localhost:8080/user/deleteProject/" + userId + "/" + id;
+        console.log(url);
+
+        ProcessData.getFromServer(url).then(res => {
+            alert(res.message);
+            location.reload();
+        });
+
+    }
+     
+}
+
+function recreateNode(el, withChildren) {
+    if (withChildren) {
+      el.parentNode.replaceChild(el.cloneNode(true), el);
+    }
+    else {
+      var newEl = el.cloneNode(false);
+      while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+      el.parentNode.replaceChild(newEl, el);
+    }
+}
+
+function submitProjectForm() {
+
+    const toolbarForm = document.querySelector(".toolbar #projectForm");
+
+    const projectSelector = toolbarForm.querySelector("#projectSelector").value;
+    const projectNameSelector = toolbarForm.querySelector("#projectNameSelector").value;
+    const projectStart = toolbarForm.querySelector("#projectStart").value.replace("-", "/");
+    const projectEnd = toolbarForm.querySelector("#projectEnd").value.replace("-", "/");
+    const description = toolbarForm.querySelector("#description").value;
+    const activities = toolbarForm.querySelectorAll('#activities :checked');
+    const tools =  toolbarForm.querySelectorAll('#tools :checked');
+
+    const activitiesList = [...activities].map(option => option.value);
+    const toolsList = [...tools].map(option => option.value);
+
+
+    let finalProjectObj = {
+        workplace: projectSelector,
+        startTime: projectStart,
+        endTime: projectEnd,
+        name: projectNameSelector,
+        post: "",
+        activities: activitiesList,
+        tools: toolsList,
+        description: description
+    }
+    
+
+    const url = "http://localhost:8080/user/addProjectToUser/" + userId;
+
+    ProcessData.postToServer(url, finalProjectObj).then(res => {
+        alert(res.message);
+        location.reload();
+    });
 }
 
 
@@ -341,60 +545,21 @@ function convertToPdf() {
 
 }
 
-function recreateNode(el, withChildren) {
-    if (withChildren) {
-      el.parentNode.replaceChild(el.cloneNode(true), el);
-    }
-    else {
-      var newEl = el.cloneNode(false);
-      while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
-      el.parentNode.replaceChild(newEl, el);
-    }
-}
 
-function submitProjectForm() {
-    const projectSelector = document.getElementById("projectSelector").value;
-    const projectNameSelector = document.getElementById("projectNameSelector").value;
-    const projectStart = document.getElementById("projectStart").value;
-    const projectEnd = document.getElementById("projectEnd").value;
-    const description = document.getElementById("description").value;
-    const activities = document.querySelectorAll('#activities :checked');
-    const tools =  document.querySelectorAll('#tools :checked');
-
-    const activitiesList = [...activities].map(option => option.value);
-    const toolsList = [...tools].map(option => option.value);
-
-    const fillTime = projectStart + " - " +projectEnd;
-
-    let finalProjectObj = {
-        workplace: projectSelector,
-        time: fillTime,
-        name: projectNameSelector,
-        post: "",
-        activities: activitiesList,
-        tools: toolsList,
-        description: description
-    }
-
-    const url = "http://localhost:8080/project/addProject";
-
-    ProcessData.addProject(url, finalProjectObj).then(res => {
-        alert(res.message);
-        location.reload();
-    });
-}
 
 
 async function run() {
 
 
-    const projectsFromServer = await ProcessData.readJsonFromServer("http://localhost:8080/project/getProjects");
-    console.log(projectsFromServer);
+   const user = await ProcessData.getFromServer("http://localhost:8080/user/getUser/" + userId);
+    console.log(user);
 
     const uiTools = new UItools();
 
-    uiTools.generateProjectSection(projectsFromServer);
+    uiTools.generateProfilSite(user.personal);
+    uiTools.generateProjectSection(user.projects);
     formTools.populateProjectForm();
+    formTools.populatePersonalForm(user.personal);
 }
 
 run();
