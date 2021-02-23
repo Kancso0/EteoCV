@@ -25,7 +25,7 @@ class UItools {
                             <div></div>
                         </div>
                         `;
-        footer.innerHTML = footerHTML;
+        footer.innerHTML = footerHTML; 
 
         return footer;
     }
