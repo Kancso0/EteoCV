@@ -1,5 +1,6 @@
 package com.Eteo.EteoCV.models.User;
 
+import com.Eteo.EteoCV.models.Knowledge.Knowledge;
 import com.Eteo.EteoCV.models.Project;
 import com.Eteo.EteoCV.models.UserPersonal.Personal;
 import lombok.AllArgsConstructor;
@@ -13,9 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 
 @Document(collection = "user")
 public class User {
@@ -23,5 +22,16 @@ public class User {
     @Id
     private String id;
     private Personal personal;
+    private Knowledge knowledge;
     private List<Project> projects = new ArrayList<>();
+
+    public User() {
+    }
+
+    public User(String id, Personal personal, Knowledge knowledge, List<Project> projects) {
+        this.id = id;
+        this.personal = personal;
+        this.knowledge = knowledge;
+        this.projects = projects;
+    }
 }

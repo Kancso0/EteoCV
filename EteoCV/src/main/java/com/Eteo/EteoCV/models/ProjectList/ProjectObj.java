@@ -12,9 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 
 @Document(collection = "projectList")
 public class ProjectObj {
@@ -24,4 +22,12 @@ public class ProjectObj {
     private String workplace;
     private List<CustomerObj> costumer = new ArrayList<>();
 
+    public ProjectObj() {
+    }
+
+    public ProjectObj(String id, String workplace, List<CustomerObj> costumer) {
+        this.id = id;
+        this.workplace = workplace;
+        this.costumer = costumer;
+    }
 }

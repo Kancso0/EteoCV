@@ -1,8 +1,10 @@
 package com.Eteo.EteoCV.controllers;
 
+import com.Eteo.EteoCV.models.Knowledge.Knowledge;
 import com.Eteo.EteoCV.models.Project;
 import com.Eteo.EteoCV.models.User.User;
 import com.Eteo.EteoCV.models.UserPersonal.Personal;
+import com.Eteo.EteoCV.payloads.request.Dto.KnowledgeDto;
 import com.Eteo.EteoCV.payloads.response.MessageResponse;
 import com.Eteo.EteoCV.repository.UserCvRepo;
 import com.Eteo.EteoCV.services.UserCvService;
@@ -72,5 +74,10 @@ public class UserCvController {
 
      }
 
+    @PostMapping("/{userId}/knowledge")
+    public ResponseEntity<MessageResponse> addKnowledgeToUser(@PathVariable("userId") String userId, @RequestBody KnowledgeDto knowledgeDto) {
+
+        return userCvService._modifyUserKnowlegde(userId, knowledgeDto);
+    }
 
 }

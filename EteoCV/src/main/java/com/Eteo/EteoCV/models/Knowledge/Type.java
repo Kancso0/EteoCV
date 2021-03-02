@@ -9,11 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
+
 public class Type {
 
     private String name;
     private List<String> type = new ArrayList<>();
+
+    public Type() {
+    }
+
+    public Type(String name, List<String> type) {
+        this.name = name;
+        this.type = type;
+    }
 }

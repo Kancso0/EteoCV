@@ -1,9 +1,6 @@
 package com.Eteo.EteoCV.controllers;
 
 import com.Eteo.EteoCV.models.PersonalProperties.PersonalProperties;
-import com.Eteo.EteoCV.models.Project;
-import com.Eteo.EteoCV.models.UserPersonal.Personal;
-import com.Eteo.EteoCV.payloads.request.Username;
 import com.Eteo.EteoCV.payloads.response.MessageResponse;
 import com.Eteo.EteoCV.repository.PersonalPropertiesRepo;
 import com.Eteo.EteoCV.repository.PersonalRepo;
@@ -13,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/personal")

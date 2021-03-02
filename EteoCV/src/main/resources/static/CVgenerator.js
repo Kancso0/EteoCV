@@ -1,6 +1,6 @@
 
-const userId = "6034fc36c6033033bd603e84";
-//const userId = "6037e7a6b8ff86077cb125d2";
+//const userId = "6034fc36c6033033bd603e84";
+const userId = "603e019791926c2d629397ce";
 
 class UItools {
 
@@ -37,6 +37,7 @@ class UItools {
         document.querySelector("#profilSite .name").innerText = userData.name;
         document.querySelector("#profilSite .role").innerText = userData.role;
         document.querySelector("#profilSite .position").innerText = userData.position;
+        document.querySelector("#profilSite .year_of_birth").innerText = userData.year_of_birth;
         document.querySelector("#profilSite .strengths").innerText = userData.strengths.toString();
         document.querySelector("#profilSite .studies").innerText = userData.studium + " , " + userData.studiumYear;
 
@@ -71,6 +72,52 @@ class UItools {
         profilSite.appendChild(footer);
 
 
+    }
+
+    generateKnowledgeSite(knowledges) {
+
+
+
+        const knowledgeSite = document.querySelector("#knowledgeSite");
+
+        this.generateKnowledgeTable(knowledges.programming_language, "Programmiersprachen");
+        this.generateKnowledgeTable(knowledges.others, "Weitere");
+        this.generateKnowledgeTable(knowledges.frameworks, "Frameworks");
+        this.generateKnowledgeTable(knowledges.cloud, "Tools");
+        this.generateKnowledgeTable(knowledges.foreign_language, "Sprachen");
+
+        const footer = this.generateFooter();
+        knowledgeSite.appendChild(footer);
+    }
+
+    generateKnowledgeTable(knowledge, title) {
+
+        if(knowledge.length === 0) return;
+
+        const knowledgeTable = document.querySelector("#knowledgeTable");
+
+        const tr = document.createElement("tr");
+        const first_td = document.createElement("td");
+                first_td.innerText = title;
+
+        tr.appendChild(first_td);
+
+        const secound_td = document.createElement("td");
+
+           
+        for(let i=0; i < knowledge.length; i++) {
+                let p = document.createElement("p");
+                    p.innerText += knowledge[i].name + ": ";
+                    for(let j=0; j < knowledge[i].type.length; j++) {
+                        p.innerText += knowledge[i].type[j] + ", ";
+                    }
+                
+                secound_td.appendChild(p);
+        }
+
+        tr.appendChild(secound_td);
+        knowledgeTable.appendChild(tr);      
+            
     }
 
     generateProjectDiv(json) {
@@ -144,6 +191,18 @@ class UItools {
 
     generateProjectSection(json) {
         const siteSection = document.querySelector(".site_section");
+
+        if(json.length === 0) {
+            const actualSite = document.getElementById('knowledgeSite-1');
+            const header = this.generateHeader();
+            const footer = this.generateFooter();
+
+            actualSite.appendChild(header);
+            actualSite.appendChild(footer);
+            this.setFooterSiteNum();
+            return;
+        }
+
         const maxHeight = 600;
 
         let needHeaderForFirstSide = true;
@@ -326,18 +385,65 @@ class formTools {
         });
     }
 
-    static populateKnowledgeForm(parent_node, data) {
+    static populateKnowledgeForm(data, userData) {
 
-        const node = document.getElementById('' + parent_node);
-        console.log(node);
+        this.generateKnowledges("programming_language", "Proggramming Language", data.programming_language, userData.programming_language);
+        this.generateKnowledges("foreign_language", "Foreign Language" ,data.foreign_language, userData.foreign_language);
+        this.generateKnowledges("others", "Others" ,data.others, userData.others);
+        this.generateKnowledges("cloud", "Cloud",data.cloud, userData.cloud);
+        this.generateKnowledges("frameworks", "Frameworks", data.frameworks, userData.frameworks);
+    }
 
-        let HTML = `
-        <div class="title">${parent_node}</div>
-        `;
+    static generateKnowledges(parent_node, title, data, userData) {
 
+        console.log(userData);
+        const knowledgeNode = document.getElementById('' + parent_node);
+        
+
+        const titleDiv = document.createElement("div");
+            titleDiv.classList.add("title");
+            titleDiv.innerText = title;
+
+            knowledgeNode.appendChild(titleDiv);
+
+        data.forEach(knowledge => {
+            const subTitle = document.createElement("div");
+                    subTitle.classList.add("sub_title", "text-center");
+                    subTitle.innerText = knowledge.name;
+            const checkboxDiv = document.createElement("div");
+                    checkboxDiv.classList.add("checkboxes");
+
+                    knowledgeNode.appendChild(subTitle);
+                    knowledgeNode.appendChild(checkboxDiv);
+
+                    knowledge.type.forEach(type => {
+                        const label = document.createElement("label");
+                            label.innerText = type;
+                            const input = document.createElement("input");
+                                input.type = "checkbox";
+                                input.value = type;
+                                input.id = type;
+                                input.name = type;
+
+                            const knowledgeFromUser = userData.find(data => data.name === knowledge.name);
+                            if(knowledgeFromUser) {
+                                knowledgeFromUser.type.forEach(userType => {
+                                    if(userType === type) {
+                                        input.checked = true;
+                                    }
+                                });
+                            }                  
+                            
+                        
+                        checkboxDiv.appendChild(label);
+                        checkboxDiv.appendChild(input);
+                    });
+        });  
+
+       /* let knowledgeHTML = `<div class="title">${title}</div>`;
 
         for(let i = 0; i < data.length; i++) {
-            HTML += `       
+            knowledgeHTML += `       
                 <div class="sub_title text-center">${data[i].name}</div>
                 <div class="checkboxes">`
             let checkboxes = ``;
@@ -347,11 +453,11 @@ class formTools {
                     <input type="checkbox" name="${data[i].type[j]}" value="${data[i].type[j]}" id="${data[i].type[j]}"></input>
                     `;
             }
-            HTML += checkboxes;
-            HTML += `</div></div>`;
+            knowledgeHTML += checkboxes;
+            knowledgeHTML += `</div></div>`;
         }
 
-        node.innerHTML = HTML;
+        node.innerHTML = knowledgeHTML;*/
 
     }
 
@@ -403,18 +509,104 @@ class ProcessData {
     }
 }
 
-function submitPersonalForm() {
-    let finalPersonalObj = {
-        name: "",
-        role: "",
-        position: "",
-        year_of_birth: "",
-        strengths: "",
-        studium: "",
-        studiumYear: "",
-        sector: "",
-        certificates: ""
+function submitKnowlegdeForm() {
+    const knowledgeFrom = document.querySelector("#knowledgeForm");
+
+    const knowledgeObj = {
+        programming_language: [],
+        frameworks: [],
+        cloud: [],
+        others: [],
+        foreign_language: []
     };
+
+    [...knowledgeFrom.querySelectorAll("input")].map(input => {
+
+        if(input.checked) {
+
+            let obj = {name: "", type: []};
+            let subName = input.parentNode.previousSibling.innerText;
+            let knowledge = input.parentNode.parentNode.id;
+
+            switch(knowledge) {
+                case 'frameworks': {
+                   let element = knowledgeObj.frameworks.find(elem => elem.name === subName);
+                    if(element) {
+                        element.type.push(input.value);
+                    } else {
+                        obj.name = subName;
+                        obj.type.push(input.value);
+                        knowledgeObj.frameworks.push(obj);
+                    }            
+                    break;
+                }
+                case 'programming_language': {
+                    let element = knowledgeObj.programming_language.find(elem => elem.name === subName);
+                    if(element) {
+                        element.type.push(input.value);
+                    } else {
+                        obj.name = subName;
+                        obj.type.push(input.value);
+                        knowledgeObj.programming_language.push(obj);
+                    }    
+                    break;
+                }
+                case 'cloud': {
+                    let element = knowledgeObj.cloud.find(elem => elem.name === subName);
+                    if(element) {
+                        element.type.push(input.value);
+                    } else {
+                        obj.name = subName;
+                        obj.type.push(input.value);
+                        knowledgeObj.cloud.push(obj);
+                    }    
+                    break;
+                }
+                case 'others': {
+                    let element = knowledgeObj.others.find(elem => elem.name === subName);
+                    if(element) {
+                        element.type.push(input.value);
+                    } else {
+                        obj.name = subName;
+                        obj.type.push(input.value);
+                        knowledgeObj.others.push(obj);
+                    }    
+                    break;
+                }
+                case 'foreign_language': {
+                    let element = knowledgeObj.foreign_language.find(elem => elem.name === subName);
+                    if(element) {
+                        element.type.push(input.value);
+                    } else {
+                        obj.name = subName;
+                        obj.type.push(input.value);
+                        knowledgeObj.foreign_language.push(obj);
+                    }    
+                    break;
+                }
+                default: console.log("No match!");
+            }
+           
+        }
+
+        
+    });
+    console.log(knowledgeObj);
+
+    const url = "http://localhost:8080/user/" + userId + "/knowledge";
+
+    ProcessData.postToServer(url, knowledgeObj).then(res => {
+        alert(res.message);
+        location.reload();
+    });
+}
+
+function makeKnowledgeObjectsToFetch() {
+
+}
+
+function submitPersonalForm() {
+    let finalPersonalObj = {};
 
     const personalForm = document.querySelector("#personalForm");
 
@@ -453,15 +645,7 @@ function saveProjectChanges() {
     const modal = document.getElementById("projectModal");
 
     let finalProjectObj = {
-        id: "",
-        workplace: "",
-        startTime: "",
-        endTime: "",
-        name: "",
-        post: "",
-        activities: "",
-        tools: "",
-        description: ""
+        post: ""
     };
 
     finalProjectObj.description = modal.querySelector("#description").value;
@@ -586,16 +770,16 @@ async function run() {
     console.log(user);
 
     const knowledgeList = await ProcessData.getFromServer("http://localhost:8080/knowledge/list/get");
-    console.log(knowledgeList[0].frameworks);
+
     const uiTools = new UItools();
 
     uiTools.generateProfilSite(user.personal);
+    uiTools.generateKnowledgeSite(user.knowledge);
     uiTools.generateProjectSection(user.projects);
     formTools.populateProjectForm();
     formTools.populatePersonalForm(user.personal);
-    formTools.populateKnowledgeForm("frameworks", knowledgeList[0].frameworks);
-    formTools.populateKnowledgeForm("cloud", knowledgeList[0].cloud);
-    formTools.populateKnowledgeForm("others", knowledgeList[0].others);
+    formTools.populateKnowledgeForm(knowledgeList[0], user.knowledge);
+    
 }
 
 run();

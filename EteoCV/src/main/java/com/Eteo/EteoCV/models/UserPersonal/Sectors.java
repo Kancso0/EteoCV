@@ -8,11 +8,18 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
+
 public class Sectors {
 
     private String name;
     private List<String> sector;
+
+    public Sectors() {
+    }
+
+    public Sectors(String name, List<String> sector) {
+        this.name = name;
+        this.sector = sector;
+    }
 }

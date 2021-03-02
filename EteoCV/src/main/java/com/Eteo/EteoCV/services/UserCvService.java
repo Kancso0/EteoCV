@@ -1,8 +1,10 @@
 package com.Eteo.EteoCV.services;
 
+import com.Eteo.EteoCV.models.Knowledge.Knowledge;
 import com.Eteo.EteoCV.models.Project;
 import com.Eteo.EteoCV.models.User.User;
 import com.Eteo.EteoCV.models.UserPersonal.Personal;
+import com.Eteo.EteoCV.payloads.request.Dto.KnowledgeDto;
 import com.Eteo.EteoCV.payloads.response.MessageResponse;
 import com.Eteo.EteoCV.repository.UserCvRepo;
 import org.bson.types.ObjectId;
@@ -31,8 +33,10 @@ public class UserCvService {
         if(userFromDB.isPresent()) {
             User user = userFromDB.get();
 
-            project.setId(new ObjectId().toString());
-            user.getProjects().add(project);
+            Project newProject = new Project(project);
+
+           // project.setId(new ObjectId().toString());
+            user.getProjects().add(newProject);
             userCvRepo.save(user);
         } else {
             return new ResponseEntity<>(new MessageResponse("User not found"), HttpStatus.NOT_FOUND);
@@ -48,10 +52,19 @@ public class UserCvService {
         if(userFromDB.isPresent()) {
             User user = userFromDB.get();
 
-            for(Project project : user.getProjects()) {
+            List<Project> newProjects = user.getProjects().stream().map(project -> {
+                if(project.getId().equals(projectFromClient.getId())) {
+                    return project.rebuildProject(projectFromClient);
+                }
+                return project;
+            }).collect(Collectors.toList());
+
+            User newUser = new User(user.getId(), user.getPersonal(), user.getKnowledge(), newProjects);
+
+         /*  for(Project project : user.getProjects()) {
                 if(project.getId().equals(projectFromClient.getId())) {
 
-                   /*Project newP = project.rebuildProject(projectFromClient);*/
+                   /*Project newP = project.rebuildProject(projectFromClient);
 
                     project.setWorkplace(projectFromClient.getWorkplace());
                     project.setName(projectFromClient.getName());
@@ -63,8 +76,8 @@ public class UserCvService {
                     project.setDescription(projectFromClient.getDescription());
 
                 }
-            }
-            userCvRepo.save(user);
+            }*/
+            userCvRepo.save(newUser);
 
         } else {
             return new ResponseEntity<>(new MessageResponse("User not found"), HttpStatus.NOT_FOUND);
@@ -81,11 +94,12 @@ public class UserCvService {
         if(userFromDB.isPresent()) {
             User user = userFromDB.get();
 
+            List<Project> newProjectList = user.getProjects().stream().filter(project -> !project.getId().equals(projectId)).collect(Collectors.toList());
 
-            List<Project> newProjects = user.getProjects().stream().filter(project -> !project.getId().equals(projectId)).collect(Collectors.toList());
-            user.setProjects(newProjects);
+            User newUser = new User(user.getId(), user.getPersonal(), user.getKnowledge(), newProjectList);
+          //  user.setProjects(newProjects);
 
-            userCvRepo.save(user);
+            userCvRepo.save(newUser);
         } else {
             return new ResponseEntity<>(new MessageResponse("User not found"), HttpStatus.NOT_FOUND);
         }
@@ -100,8 +114,10 @@ public class UserCvService {
         if(userFromDB.isPresent()) {
             User user = userFromDB.get();
 
-            user.setPersonal(personalFromClient);
-            userCvRepo.save(user);
+            User newUser = new User(user.getId(), personalFromClient, user.getKnowledge(), user.getProjects());
+
+           // user.setPersonal(personalFromClient);
+            userCvRepo.save(newUser);
         }else {
             return new ResponseEntity<>(new MessageResponse("User not found"), HttpStatus.NOT_FOUND);
         }
@@ -119,5 +135,24 @@ public class UserCvService {
         } else {
             return new ResponseEntity<>(new MessageResponse("User not found"), HttpStatus.NOT_FOUND);
         }
+    }
+
+    public ResponseEntity<MessageResponse> _modifyUserKnowlegde(String userId, KnowledgeDto knowledgeDto) {
+
+        Optional<User> userFromDB = userCvRepo.findById(userId);
+
+        if(userFromDB.isPresent()) {
+            User user = userFromDB.get();
+
+            Knowledge knowledge = new Knowledge(knowledgeDto);
+
+            User newUser = new User(user.getId(), user.getPersonal(), knowledge, user.getProjects());
+
+            userCvRepo.save(newUser);
+        }else {
+            return new ResponseEntity<>(new MessageResponse("User not found"), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new MessageResponse("Successfully knowledge data modifying"), HttpStatus.OK);
     }
 }

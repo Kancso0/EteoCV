@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
+
+
 @AllArgsConstructor
 
 public class Project {
@@ -29,6 +29,9 @@ public class Project {
     private List<String> activities = new ArrayList<>();
     private List<String> tools = new ArrayList<>();
 
+    public Project() {
+    }
+
     public Project(String workplace, String startTime, String endTime, String name, String post, String description, List<String> activities, List<String> tools) {
         this.workplace = workplace;
         this.startTime = startTime;
@@ -41,7 +44,7 @@ public class Project {
     }
 
     public Project(Project project) {
-        this.id = project.getId();
+        this.id = new ObjectId().toString();
         this.workplace = project.getWorkplace();
         this.startTime = project.getStartTime();
         this.endTime = project.getEndTime();

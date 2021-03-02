@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 
 @Document(collection = "personalProperties")
 public class PersonalProperties {
@@ -26,5 +23,17 @@ public class PersonalProperties {
     private List<String>  tools = new ArrayList<>();
     private List<String>  activities = new ArrayList<>();
 
+    public PersonalProperties() {
+    }
 
+    public PersonalProperties(List<String> role, List<String> position, List<String> strengths, List<String> studies, List<String> sectors, List<String> certificates, List<String> tools, List<String> activities) {
+        this.role = role;
+        this.position = position;
+        this.strengths = strengths;
+        this.studies = studies;
+        this.sectors = sectors;
+        this.certificates = certificates;
+        this.tools = tools;
+        this.activities = activities;
+    }
 }

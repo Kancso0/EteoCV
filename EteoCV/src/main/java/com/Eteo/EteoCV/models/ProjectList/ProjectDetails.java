@@ -6,11 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
+
 public class ProjectDetails {
 
     private String name;
     private String description;
+
+    public ProjectDetails() {
+    }
+
+    public ProjectDetails(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

@@ -170,3 +170,33 @@
     background-color: white;
 }
 
+#knowledgeTable td:first-child {
+    vertical-align: top;
+    width: 200px;
+}
+
+#knowledgeTable td {
+    padding: 15px;
+}
+
+#knowledgeTable td p {
+    margin: 0px;
+    padding: 0px;
+    text-decoration: none;
+}
+
+#knowledgeForm .title {
+    font-size: 20px;
+    text-shadow: 2px 2px 5px rgb(255, 72, 0);
+}
+
+#knowledgeForm .sub_title {
+    border-top: 1px dotted gray;
+    font-weight: bold;
+}
+
+#knowledgeForm label {
+    margin-left: 20px;
+    margin-right: 5px;
+}
+
